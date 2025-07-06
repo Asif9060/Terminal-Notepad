@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Terminal Interface</title>
+      <link rel="stylesheet" href="style.css" />
+      <link
+         href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Consolas&display=swap"
+         rel="stylesheet" />
+      <link
+         rel="stylesheet"
+         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+   </head>
+   <body>
+      <!-- Terminal screen area -->
+      <main class="terminal-screen">
+         <div class="terminal-content">
+            <!-- Notepad Application -->
+            <div class="notepad-app" id="notepadApp">
+               <div class="notepad-header">
+                  <h1 class="terminal-title">$ nano notes.txt</h1>
+                  <div class="notepad-controls">
+                     <button
+                        class="terminal-btn"
+                        id="addNoteBtn"
+                        aria-label="Add new note">
+                        <span class="cmd-prefix">+</span>
+                        <span>new</span>
+                     </button>
+                     <button
+                        class="terminal-btn"
+                        id="clearAllBtn"
+                        aria-label="Clear all notes">
+                        <span class="cmd-prefix">rm</span>
+                        <span>all</span>
+                     </button>
+                     <button
+                        class="terminal-btn"
+                        id="testAlertsBtn"
+                        aria-label="Test alert system">
+                        <span class="cmd-prefix">!</span>
+                        <span>alerts</span>
+                     </button>
+                  </div>
+               </div>
+
+               <!-- Note Input Area -->
+               <div
+                  class="note-input-section"
+                  id="noteInputSection"
+                  style="display: none">
+                  <div class="input-header">
+                     <span class="terminal-prompt">$ echo "</span>
+                  </div>
+                  <textarea
+                     id="noteInput"
+                     class="note-textarea"
+                     placeholder="Enter your note here..."
+                     rows="4"
+                     aria-label="Note content input"></textarea>
+                  <div class="input-actions">
+                     <button class="terminal-btn save-btn" id="saveNoteBtn">
+                        <span class="cmd-prefix">></span>
+                        <span>save</span>
+                     </button>
+                     <button class="terminal-btn cancel-btn" id="cancelNoteBtn">
+                        <span class="cmd-prefix">x</span>
+                        <span>cancel</span>
+                     </button>
+                  </div>
+               </div>
+
+               <!-- Notes List -->
+               <div class="notes-container">
+                  <div class="notes-header">
+                     <span class="terminal-prompt">$ ls -la notes/</span>
+                  </div>
+                  <div class="notes-list" id="notesList" aria-label="Notes list">
+                     <div class="empty-state" id="emptyState">
+                        <span class="terminal-text"
+                           >No notes found. Use '+ new' to create your first note.</span
+                        >
+                     </div>
+                  </div>
+               </div>
+
+               <!-- Status Messages -->
+               <div class="status-message" id="statusMessage" aria-live="polite"></div>
+            </div>
+         </div>
+         <div class="scanlines"></div>
+      </main>
+
+      <!-- Alert System -->
+      <div class="alert-container" id="alertContainer" aria-live="assertive"></div>
+
+      <!-- Modal Alert Overlay -->
+      <div class="modal-overlay" id="modalOverlay" role="dialog" aria-hidden="true">
+         <div class="modal-alert">
+            <div class="modal-header">
+               <i class="modal-icon"></i>
+               <h3 class="modal-title"></h3>
+               <button class="modal-close" aria-label="Close modal">
+                  <i class="fas fa-times"></i>
+               </button>
+            </div>
+            <div class="modal-content">
+               <p class="modal-message"></p>
+            </div>
+            <div class="modal-actions">
+               <button class="terminal-btn modal-confirm">OK</button>
+               <button class="terminal-btn modal-cancel" style="display: none">
+                  Cancel
+               </button>
+            </div>
+         </div>
+      </div>
+
+      <!-- Terminal Command Navigation -->
+      <!-- <nav class="terminal-nav" id="terminalNav">
+         <div class="terminal-nav-container">
+            <div class="terminal-prompt">
+               <span class="prompt-symbol">$</span>
+               <span class="cursor">_</span>
+            </div>
+
+            <div class="terminal-commands">
+               <button class="terminal-cmd active" data-cmd="home">
+                  <span class="cmd-prefix">></span>
+                  <span class="cmd-text">home</span>
+               </button>
+
+               <button class="terminal-cmd" data-cmd="back">
+                  <span class="cmd-prefix">></span>
+                  <span class="cmd-text">back</span>
+               </button>
+
+               <button class="terminal-cmd" data-cmd="forward">
+                  <span class="cmd-prefix">></span>
+                  <span class="cmd-text">forward</span>
+               </button>
+
+               <button class="terminal-cmd" data-cmd="menu">
+                  <span class="cmd-prefix">></span>
+                  <span class="cmd-text">menu</span>
+               </button>
+
+               <button class="terminal-cmd" data-cmd="settings">
+                  <span class="cmd-prefix">></span>
+                  <span class="cmd-text">settings</span>
+               </button>
+            </div>
+         </div>
+      </nav> -->
+
+      <!-- Dark/Light mode toggle -->
+      <button class="theme-toggle" id="themeToggle">
+         <i class="fas fa-moon"></i>
+      </button>
+
+      <script>
+         // Terminal navigation functionality
+         const terminalCommands = document.querySelectorAll(".terminal-cmd");
+         const themeToggle = document.getElementById("themeToggle");
+         const body = document.body;
+         const cursor = document.querySelector(".cursor");
+
+         // Notepad functionality
+         const notepadApp = document.getElementById("notepadApp");
+         const addNoteBtn = document.getElementById("addNoteBtn");
+         const clearAllBtn = document.getElementById("clearAllBtn");
+         const testAlertsBtn = document.getElementById("testAlertsBtn");
+         const noteInputSection = document.getElementById("noteInputSection");
+         const noteInput = document.getElementById("noteInput");
+         const saveNoteBtn = document.getElementById("saveNoteBtn");
+         const cancelNoteBtn = document.getElementById("cancelNoteBtn");
+         const notesList = document.getElementById("notesList");
+         const emptyState = document.getElementById("emptyState");
+         const statusMessage = document.getElementById("statusMessage");
+
+         let notes = JSON.parse(localStorage.getItem("terminal-notes") || "[]");
+         let editingNoteId = null;
+
+         // Alert System functionality
+         const alertContainer = document.getElementById("alertContainer");
+         const modalOverlay = document.getElementById("modalOverlay");
+
+         let alertCounter = 0;
+
+         // Alert System
+         class AlertSystem {
+            constructor() {
+               this.setupModalEventListeners();
+            }
+
+            setupModalEventListeners() {
+               const modalClose = modalOverlay.querySelector(".modal-close");
+
+               modalClose.addEventListener("click", () => this.closeModal());
+               modalOverlay.addEventListener("click", (e) => {
+                  if (e.target === modalOverlay) this.closeModal();
+               });
+
+               document.addEventListener("keydown", (e) => {
+                  if (e.key === "Escape" && !modalOverlay.hasAttribute("aria-hidden")) {
+                     this.closeModal();
+                  }
+               });
+            }
+
+            // Toast notifications
+            showToast(message, type = "info", duration = 4000) {
+               const alertId = `alert-${++alertCounter}`;
+               const alert = document.createElement("div");
+               alert.className = `terminal-alert toast-alert ${type}`;
+               alert.id = alertId;
+               alert.setAttribute("role", "alert");
+               alert.setAttribute("aria-live", "polite");
+
+               const icon = this.getIcon(type);
+
+               alert.innerHTML = `
+                  <div class="alert-content">
+                     <i class="alert-icon ${icon}"></i>
+                     <span class="alert-message">${this.escapeHtml(message)}</span>
+                     <button class="alert-close" aria-label="Close alert" onclick="alertSystem.closeToast('${alertId}')">
+                        <i class="fas fa-times"></i>
+                     </button>
+                  </div>
+                  <div class="alert-progress" style="animation-duration: ${duration}ms;"></div>
+               `;
+
+               alertContainer.appendChild(alert);
+
+               // Trigger animation
+               setTimeout(() => alert.classList.add("show"), 10);
+
+               // Auto-remove
+               setTimeout(() => this.closeToast(alertId), duration);
+
+               return alertId;
+            }
+
+            // Inline alerts
+            showInlineAlert(container, message, type = "info") {
+               const existingAlert = container.querySelector(
+                  ".terminal-alert.inline-alert"
+               );
+               if (existingAlert) {
+                  existingAlert.remove();
+               }
+
+               const alert = document.createElement("div");
+               alert.className = `terminal-alert inline-alert ${type}`;
+               alert.setAttribute("role", "alert");
+
+               const icon = this.getIcon(type);
+
+               alert.innerHTML = `
+                  <div class="alert-content">
+                     <i class="alert-icon ${icon}"></i>
+                     <span class="alert-message">${this.escapeHtml(message)}</span>
+                     <button class="alert-close" aria-label="Close alert">
+                        <i class="fas fa-times"></i>
+                     </button>
+                  </div>
+               `;
+
+               // Add close functionality
+               alert.querySelector(".alert-close").addEventListener("click", () => {
+                  alert.classList.add("hide");
+                  setTimeout(() => alert.remove(), 300);
+               });
+
+               container.appendChild(alert);
+               setTimeout(() => alert.classList.add("show"), 10);
+
+               return alert;
+            }
+
+            // Modal alerts
+            showModal(title, message, type = "info", options = {}) {
+               const {
+                  confirmText = "OK",
+                  cancelText = "Cancel",
+                  showCancel = false,
+                  onConfirm = null,
+                  onCancel = null,
+               } = options;
+
+               // Get fresh references to modal elements
+               const modalAlert = modalOverlay.querySelector(".modal-alert");
+               const modalIcon = modalOverlay.querySelector(".modal-icon");
+               const modalTitle = modalOverlay.querySelector(".modal-title");
+               const modalMessage = modalOverlay.querySelector(".modal-message");
+               const modalConfirm = modalOverlay.querySelector(".modal-confirm");
+               const modalCancel = modalOverlay.querySelector(".modal-cancel");
+
+               modalIcon.className = `modal-icon ${this.getIcon(type)}`;
+               modalTitle.textContent = title;
+               modalMessage.textContent = message;
+               modalAlert.className = `modal-alert ${type}`;
+
+               // Update button text and visibility
+               modalConfirm.textContent = confirmText;
+               modalCancel.textContent = cancelText;
+               modalCancel.style.display = showCancel ? "block" : "none";
+
+               // Remove existing event listeners by cloning
+               const newConfirm = modalConfirm.cloneNode(true);
+               const newCancel = modalCancel.cloneNode(true);
+
+               modalConfirm.parentNode.replaceChild(newConfirm, modalConfirm);
+               modalCancel.parentNode.replaceChild(newCancel, modalCancel);
+
+               // Add new event listeners
+               newConfirm.addEventListener("click", () => {
+                  if (onConfirm) onConfirm();
+                  this.closeModal();
+               });
+
+               newCancel.addEventListener("click", () => {
+                  if (onCancel) onCancel();
+                  this.closeModal();
+               });
+
+               // Show modal
+               modalOverlay.removeAttribute("aria-hidden");
+               modalOverlay.classList.add("show");
+               newConfirm.focus();
+            }
+
+            closeModal() {
+               modalOverlay.classList.remove("show");
+               setTimeout(() => {
+                  modalOverlay.setAttribute("aria-hidden", "true");
+               }, 300);
+            }
+
+            closeToast(alertId) {
+               const alert = document.getElementById(alertId);
+               if (alert) {
+                  alert.classList.add("hide");
+                  setTimeout(() => alert.remove(), 300);
+               }
+            }
+
+            getIcon(type) {
+               const icons = {
+                  success: "fas fa-check-circle",
+                  warning: "fas fa-exclamation-triangle",
+                  error: "fas fa-times-circle",
+                  info: "fas fa-info-circle",
+               };
+               return icons[type] || icons.info;
+            }
+
+            escapeHtml(text) {
+               const div = document.createElement("div");
+               div.textContent = text;
+               return div.innerHTML;
+            }
+
+            // Convenience methods
+            success(message, options = {}) {
+               if (options.modal) {
+                  return this.showModal("Success", message, "success", options);
+               }
+               if (options.inline && options.container) {
+                  return this.showInlineAlert(options.container, message, "success");
+               }
+               return this.showToast(message, "success", options.duration);
+            }
+
+            warning(message, options = {}) {
+               if (options.modal) {
+                  return this.showModal("Warning", message, "warning", options);
+               }
+               if (options.inline && options.container) {
+                  return this.showInlineAlert(options.container, message, "warning");
+               }
+               return this.showToast(message, "warning", options.duration);
+            }
+
+            error(message, options = {}) {
+               if (options.modal) {
+                  return this.showModal("Error", message, "error", options);
+               }
+               if (options.inline && options.container) {
+                  return this.showInlineAlert(options.container, message, "error");
+               }
+               return this.showToast(message, "error", options.duration || 6000);
+            }
+
+            info(message, options = {}) {
+               if (options.modal) {
+                  return this.showModal("Information", message, "info", options);
+               }
+               if (options.inline && options.container) {
+                  return this.showInlineAlert(options.container, message, "info");
+               }
+               return this.showToast(message, "info", options.duration);
+            }
+         }
+
+         // Initialize alert system
+         const alertSystem = new AlertSystem();
+
+         // Initialize notepad
+         function initNotepad() {
+            renderNotes();
+            setupEventListeners();
+         }
+
+         // Setup event listeners
+         function setupEventListeners() {
+            addNoteBtn.addEventListener("click", showAddNoteForm);
+            clearAllBtn.addEventListener("click", confirmClearAll);
+            testAlertsBtn.addEventListener("click", showAlertDemo);
+            saveNoteBtn.addEventListener("click", saveNote);
+            cancelNoteBtn.addEventListener("click", hideAddNoteForm);
+
+            // Auto-save functionality
+            noteInput.addEventListener("input", debounce(autoSave, 1000));
+         }
+
+         // Alert System Demo
+         function showAlertDemo() {
+            let demoStep = 0;
+            const demos = [
+               () =>
+                  alertSystem.success("This is a success toast notification!", {
+                     duration: 3000,
+                  }),
+               () =>
+                  alertSystem.warning("This is a warning toast notification!", {
+                     duration: 3000,
+                  }),
+               () =>
+                  alertSystem.error("This is an error toast notification!", {
+                     duration: 3000,
+                  }),
+               () =>
+                  alertSystem.info("This is an info toast notification!", {
+                     duration: 3000,
+                  }),
+               () =>
+                  alertSystem.success("Success modal demonstration", {
+                     modal: true,
+                     confirmText: "Great!",
+                     onConfirm: () => nextDemo(),
+                  }),
+               () =>
+                  alertSystem.warning("Warning modal with cancel option", {
+                     modal: true,
+                     showCancel: true,
+                     confirmText: "Proceed",
+                     cancelText: "Cancel",
+                     onConfirm: () => nextDemo(),
+                     onCancel: () => alertSystem.info("Demo cancelled"),
+                  }),
+               () => {
+                  const container = document.querySelector(".notepad-header");
+                  alertSystem.info("This is an inline alert in the header!", {
+                     inline: true,
+                     container: container,
+                  });
+                  setTimeout(nextDemo, 2000);
+               },
+               () =>
+                  alertSystem.info(
+                     "Alert demo completed! All alert types demonstrated.",
+                     { duration: 4000 }
+                  ),
+            ];
+
+            function nextDemo() {
+               if (demoStep < demos.length) {
+                  setTimeout(() => {
+                     demos[demoStep]();
+                     demoStep++;
+                  }, 500);
+               }
+            }
+
+            nextDemo();
+         }
+
+         // Show add note form
+         function showAddNoteForm() {
+            noteInputSection.style.display = "block";
+            noteInput.value = "";
+            noteInput.focus();
+            editingNoteId = null;
+            addNoteBtn.textContent = "+ new";
+         }
+
+         // Hide add note form
+         function hideAddNoteForm() {
+            noteInputSection.style.display = "none";
+            noteInput.value = "";
+            editingNoteId = null;
+         }
+
+         // Save note
+         function saveNote() {
+            const content = noteInput.value.trim();
+
+            if (!content) {
+               showStatus("Error: Note cannot be empty", "error");
+               return;
+            }
+
+            const timestamp = new Date().toLocaleString();
+
+            if (editingNoteId !== null) {
+               // Update existing note
+               const noteIndex = notes.findIndex((note) => note.id === editingNoteId);
+               if (noteIndex !== -1) {
+                  notes[noteIndex].content = content;
+                  notes[noteIndex].modified = timestamp;
+                  showStatus("Note updated successfully", "success");
+               }
+            } else {
+               // Create new note
+               const newNote = {
+                  id: Date.now(),
+                  content: content,
+                  created: timestamp,
+                  modified: timestamp,
+               };
+               notes.unshift(newNote);
+               showStatus("Note saved successfully", "success");
+            }
+
+            saveToLocalStorage();
+            renderNotes();
+            hideAddNoteForm();
+         }
+
+         // Auto-save functionality
+         function autoSave() {
+            if (editingNoteId !== null && noteInput.value.trim()) {
+               const noteIndex = notes.findIndex((note) => note.id === editingNoteId);
+               if (noteIndex !== -1) {
+                  notes[noteIndex].content = noteInput.value.trim();
+                  notes[noteIndex].modified = new Date().toLocaleString();
+                  saveToLocalStorage();
+                  showStatus("Auto-saved", "info");
+               }
+            }
+         }
+
+         // Edit note
+         function editNote(noteId) {
+            const note = notes.find((n) => n.id === noteId);
+            if (note) {
+               editingNoteId = noteId;
+               noteInput.value = note.content;
+               noteInputSection.style.display = "block";
+               noteInput.focus();
+               showStatus("Editing note...", "info");
+            }
+         }
+
+         // Delete note
+         function deleteNote(noteId) {
+            alertSystem.warning("Are you sure you want to delete this note?", {
+               modal: true,
+               showCancel: true,
+               confirmText: "Delete",
+               cancelText: "Cancel",
+               onConfirm: () => {
+                  notes = notes.filter((note) => note.id !== noteId);
+                  saveToLocalStorage();
+                  renderNotes();
+                  showStatus("Note deleted", "success");
+               },
+            });
+         }
+
+         // Clear all notes
+         function confirmClearAll() {
+            if (notes.length === 0) {
+               showStatus("No notes to clear", "info");
+               return;
+            }
+
+            alertSystem.warning(
+               "Are you sure you want to delete all notes? This action cannot be undone.",
+               {
+                  modal: true,
+                  showCancel: true,
+                  confirmText: "Delete All",
+                  cancelText: "Cancel",
+                  onConfirm: () => {
+                     notes = [];
+                     saveToLocalStorage();
+                     renderNotes();
+                     hideAddNoteForm();
+                     showStatus("All notes cleared", "success");
+                  },
+               }
+            );
+         }
+
+         // Render notes list
+         function renderNotes() {
+            if (notes.length === 0) {
+               emptyState.style.display = "block";
+               notesList.innerHTML = "";
+               notesList.appendChild(emptyState);
+               return;
+            }
+
+            emptyState.style.display = "none";
+
+            const notesHTML = notes
+               .map(
+                  (note) => `
+                <div class="note-item" data-note-id="${note.id}">
+                    <div class="note-content">${escapeHtml(note.content)}</div>
+                    <div class="note-meta">
+                        <span class="note-timestamp">modified: ${note.modified}</span>
+                        <div class="note-actions">
+                            <button class="note-action-btn edit-btn" onclick="editNote(${
+                               note.id
+                            })" aria-label="Edit note">
+                                <span class="cmd-prefix">edit</span>
+                            </button>
+                            <button class="note-action-btn delete-btn" onclick="deleteNote(${
+                               note.id
+                            })" aria-label="Delete note">
+                                <span class="cmd-prefix">rm</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `
+               )
+               .join("");
+
+            notesList.innerHTML = notesHTML;
+         }
+
+         // Save to localStorage
+         function saveToLocalStorage() {
+            localStorage.setItem("terminal-notes", JSON.stringify(notes));
+         }
+
+         // Show status message - Updated to use new alert system
+         function showStatus(message, type = "info") {
+            // Use toast notifications for better UX
+            alertSystem.showToast(message, type);
+         }
+
+         // Escape HTML to prevent XSS
+         function escapeHtml(text) {
+            const div = document.createElement("div");
+            div.textContent = text;
+            return div.innerHTML;
+         }
+
+         // Debounce function
+         function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+               const later = () => {
+                  clearTimeout(timeout);
+                  func(...args);
+               };
+               clearTimeout(timeout);
+               timeout = setTimeout(later, wait);
+            };
+         }
+
+         // Cursor blinking animation
+         setInterval(() => {
+            cursor.style.opacity = cursor.style.opacity === "0" ? "1" : "0";
+         }, 500);
+
+         // Handle terminal command clicks
+         terminalCommands.forEach((cmd) => {
+            cmd.addEventListener("click", () => {
+               // Remove active class from all commands
+               terminalCommands.forEach((c) => c.classList.remove("active"));
+               // Add active class to clicked command
+               cmd.classList.add("active");
+
+               // Get command from data attribute
+               const command = cmd.dataset.cmd;
+               console.log(`Terminal: Executing command '${command}'`);
+
+               // Handle different commands
+               if (command === "home") {
+                  notepadApp.style.display = "block";
+               } else {
+                  // For other commands, you can add different functionality
+                  showStatus(`Command '${command}' executed`, "info");
+               }
+
+               // Add typing effect
+               cmd.style.transform = "scale(0.98)";
+               setTimeout(() => {
+                  cmd.style.transform = "";
+               }, 100);
+            });
+         });
+
+         // Theme toggle functionality
+         themeToggle.addEventListener("click", () => {
+            body.classList.toggle("light-mode");
+            const icon = themeToggle.querySelector("i");
+
+            if (body.classList.contains("light-mode")) {
+               icon.className = "fas fa-sun";
+            } else {
+               icon.className = "fas fa-moon";
+            }
+         });
+
+         // Add keyboard navigation (optional enhancement)
+         document.addEventListener("keydown", (e) => {
+            if (e.key >= "1" && e.key <= "5") {
+               const index = parseInt(e.key) - 1;
+               if (terminalCommands[index]) {
+                  terminalCommands[index].click();
+               }
+            }
+
+            // Escape key to cancel note editing
+            if (e.key === "Escape" && noteInputSection.style.display === "block") {
+               hideAddNoteForm();
+            }
+
+            // Ctrl+S to save note
+            if (
+               e.ctrlKey &&
+               e.key === "s" &&
+               noteInputSection.style.display === "block"
+            ) {
+               e.preventDefault();
+               saveNote();
+            }
+         });
+
+         // Touch feedback for mobile
+         terminalCommands.forEach((cmd) => {
+            cmd.addEventListener("touchstart", () => {
+               cmd.style.transform = "scale(0.98)";
+            });
+
+            cmd.addEventListener("touchend", () => {
+               setTimeout(() => {
+                  cmd.style.transform = "";
+               }, 100);
+            });
+         });
+
+         // Initialize the notepad when the page loads
+         document.addEventListener("DOMContentLoaded", initNotepad);
+
+         // Make functions globally available for onclick handlers
+         window.editNote = editNote;
+         window.deleteNote = deleteNote;
+      </script>
+   </body>
+</html>

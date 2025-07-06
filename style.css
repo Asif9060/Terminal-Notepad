@@ -1,0 +1,1095 @@
+/* CSS Custom Properties for Terminal Theme */
+:root {
+   /* Terminal color scheme */
+   --terminal-bg: #1e1e1e;
+   --terminal-primary: #00ff41;
+   --terminal-secondary: #00cc33;
+   --terminal-text: #00ff41;
+   --terminal-muted: #808080;
+   --terminal-border: rgba(0, 255, 65, 0.3);
+   --terminal-glow: rgba(0, 255, 65, 0.2);
+   --terminal-shadow: rgba(0, 0, 0, 0.8);
+   --panel-bg: rgba(30, 30, 30, 0.7);
+   --panel-border: rgba(0, 255, 65, 0.2);
+
+   /* Alert-specific colors following terminal theme */
+   --alert-success: #00ff41;
+   --alert-success-bg: rgba(0, 255, 65, 0.1);
+   --alert-success-border: rgba(0, 255, 65, 0.3);
+
+   --alert-warning: #ffaa00;
+   --alert-warning-bg: rgba(255, 170, 0, 0.1);
+   --alert-warning-border: rgba(255, 170, 0, 0.3);
+
+   --alert-error: #ff4444;
+   --alert-error-bg: rgba(255, 68, 68, 0.1);
+   --alert-error-border: rgba(255, 68, 68, 0.3);
+
+   --alert-info: #00aaff;
+   --alert-info-bg: rgba(0, 170, 255, 0.1);
+   --alert-info-border: rgba(0, 170, 255, 0.3);
+}
+
+/* Light mode variables (minimal changes for terminal) */
+.light-mode {
+   --terminal-bg: #0f0f0f;
+   --terminal-primary: #00dd33;
+   --terminal-secondary: #00aa22;
+   --terminal-text: #00dd33;
+   --terminal-muted: #666666;
+   --terminal-border: rgba(0, 221, 51, 0.3);
+   --terminal-glow: rgba(0, 221, 51, 0.2);
+
+   --alert-success: #00cc33;
+   --alert-warning: #ff8800;
+   --alert-error: #dd3333;
+   --alert-info: #0088cc;
+}
+
+/* Reset and base styles */
+* {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+}
+
+body {
+   font-family: "JetBrains Mono", "Consolas", "Monaco", "Courier New", monospace;
+   background: var(--terminal-bg);
+   color: var(--terminal-text);
+   min-height: 100vh;
+   overflow: hidden;
+   position: relative;
+}
+
+/* CRT Screen effect */
+body::before {
+   content: "";
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background: radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.2) 100%),
+      linear-gradient(90deg, transparent 50%, rgba(0, 255, 65, 0.02) 50%);
+   background-size: 100% 100%, 4px 4px;
+   pointer-events: none;
+   z-index: 10;
+}
+
+/* Terminal screen border glow */
+body::after {
+   content: "";
+   position: fixed;
+   top: 10px;
+   left: 10px;
+   right: 10px;
+   bottom: 10px;
+   border: 1px solid var(--terminal-border);
+   box-shadow: inset 0 0 20px var(--terminal-glow), 0 0 20px var(--terminal-glow);
+   pointer-events: none;
+   z-index: 5;
+}
+
+/* Terminal screen area */
+.terminal-screen {
+   padding: 20px;
+   padding-bottom: 60px; /* Space for terminal navigation */
+   min-height: 100vh;
+   position: relative;
+   z-index: 1;
+}
+
+.terminal-content {
+   width: 100%;
+   height: calc(100vh - 120px);
+   position: relative;
+}
+
+/* Scanlines effect */
+.scanlines {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background: linear-gradient(transparent 0%, rgba(0, 255, 65, 0.02) 2%, transparent 3%);
+   background-size: 100% 4px;
+   animation: scanlines 0.1s linear infinite;
+   pointer-events: none;
+   z-index: 2;
+}
+
+@keyframes scanlines {
+   0% {
+      transform: translateY(0);
+   }
+   100% {
+      transform: translateY(4px);
+   }
+}
+
+/* Terminal Command Navigation */
+.terminal-nav {
+   position: fixed;
+   bottom: 0;
+   left: 0;
+   right: 0;
+   height: 56px; /* Mobile terminal height */
+   background: #1e1e1e;
+   border-top: 1px solid var(--terminal-border);
+   box-shadow: 0 -2px 10px var(--terminal-shadow);
+   z-index: 1000;
+   font-family: "JetBrains Mono", "Consolas", "Monaco", "Courier New", monospace;
+}
+
+.terminal-nav-container {
+   display: flex;
+   align-items: center;
+   height: 100%;
+   max-width: 100%;
+   padding: 0 12px;
+   gap: 8px;
+   overflow-x: auto;
+   scrollbar-width: none; /* Firefox */
+   -ms-overflow-style: none; /* IE/Edge */
+}
+
+.terminal-nav-container::-webkit-scrollbar {
+   display: none; /* Chrome/Safari */
+}
+
+/* Terminal prompt indicator */
+.terminal-prompt {
+   display: flex;
+   align-items: center;
+   flex-shrink: 0;
+   margin-right: 8px;
+   color: var(--terminal-primary);
+   font-size: 14px;
+   font-weight: 500;
+}
+
+.prompt-symbol {
+   margin-right: 4px;
+}
+
+.cursor {
+   font-weight: bold;
+   animation: none; /* Controlled by JavaScript */
+   transition: opacity 0.1s ease;
+}
+
+/* Terminal commands container */
+.terminal-commands {
+   display: flex;
+   align-items: center;
+   gap: 4px;
+   flex: 1;
+   overflow-x: auto;
+}
+
+/* Terminal command buttons */
+.terminal-cmd {
+   display: flex;
+   align-items: center;
+   background: transparent;
+   border: 1px solid rgba(0, 255, 65, 0.2);
+   border-radius: 4px;
+   padding: 6px 10px;
+   min-width: fit-content;
+   height: 32px;
+   color: var(--terminal-muted);
+   font-family: inherit;
+   font-size: 12px;
+   font-weight: 400;
+   cursor: pointer;
+   transition: all 0.15s ease;
+   white-space: nowrap;
+   flex-shrink: 0;
+}
+
+.cmd-prefix {
+   margin-right: 4px;
+   color: var(--terminal-primary);
+   font-weight: 500;
+}
+
+.cmd-text {
+   text-transform: lowercase;
+   letter-spacing: 0.3px;
+}
+
+/* Command hover states */
+.terminal-cmd:hover {
+   border-color: var(--terminal-primary);
+   color: var(--terminal-text);
+   background: rgba(0, 255, 65, 0.05);
+   box-shadow: 0 0 8px rgba(0, 255, 65, 0.2);
+}
+
+.terminal-cmd:hover .cmd-prefix {
+   text-shadow: 0 0 4px var(--terminal-glow);
+}
+
+/* Active command state */
+.terminal-cmd.active {
+   border-color: var(--terminal-primary);
+   color: #1e1e1e;
+   background: var(--terminal-primary);
+   box-shadow: 0 0 12px var(--terminal-glow);
+}
+
+.terminal-cmd.active .cmd-prefix,
+.terminal-cmd.active .cmd-text {
+   color: #1e1e1e;
+   text-shadow: none;
+}
+
+/* Focus states for accessibility */
+.terminal-cmd:focus {
+   outline: 2px solid var(--terminal-primary);
+   outline-offset: 2px;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+   .terminal-nav {
+      height: 52px;
+   }
+
+   .terminal-nav-container {
+      padding: 0 8px;
+      gap: 6px;
+   }
+
+   .terminal-cmd {
+      padding: 5px 8px;
+      height: 30px;
+      font-size: 11px;
+      min-width: 60px;
+   }
+
+   .terminal-prompt {
+      font-size: 13px;
+   }
+
+   .cmd-prefix {
+      margin-right: 3px;
+   }
+}
+
+@media (max-width: 480px) {
+   .terminal-nav {
+      height: 48px;
+   }
+
+   .terminal-nav-container {
+      padding: 0 6px;
+      gap: 4px;
+   }
+
+   .terminal-cmd {
+      padding: 4px 6px;
+      height: 28px;
+      font-size: 10px;
+      min-width: 50px;
+   }
+
+   .terminal-prompt {
+      font-size: 12px;
+      margin-right: 6px;
+   }
+
+   /* Hide command text on very small screens, keep only prefix */
+   .cmd-text {
+      display: none;
+   }
+
+   .cmd-prefix {
+      margin-right: 0;
+   }
+}
+
+/* Enhanced touch targets for mobile */
+@media (hover: none) and (pointer: coarse) {
+   .terminal-cmd {
+      min-height: 44px;
+      padding: 8px 12px;
+   }
+
+   .terminal-cmd:active {
+      transform: scale(0.98);
+      background: rgba(0, 255, 65, 0.1);
+   }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+   .terminal-nav {
+      border-top: 2px solid var(--terminal-primary);
+   }
+
+   .terminal-cmd {
+      border-width: 2px;
+   }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+   .terminal-cmd {
+      transition: none;
+   }
+
+   .cursor {
+      animation: none;
+   }
+}
+
+/* Theme toggle button - Terminal style */
+.theme-toggle {
+   position: fixed;
+   top: 20px;
+   right: 20px;
+   width: 40px; /* Reduced size */
+   height: 40px;
+   border-radius: 4px; /* Square-ish for terminal feel */
+   background: rgba(30, 30, 30, 0.8);
+   border: 1px solid var(--terminal-border);
+   color: var(--terminal-text);
+   font-size: 1rem;
+   cursor: pointer;
+   backdrop-filter: blur(5px);
+   -webkit-backdrop-filter: blur(5px);
+   box-shadow: 0 0 10px var(--terminal-shadow);
+   transition: all 0.2s ease;
+   z-index: 1001;
+}
+
+.theme-toggle:hover {
+   border-color: var(--terminal-primary);
+   box-shadow: 0 0 15px var(--terminal-glow);
+   background: rgba(0, 255, 65, 0.1);
+}
+
+/* Notepad Application Styles */
+.notepad-app {
+   max-width: 800px;
+   margin: 0 auto;
+   padding: 20px;
+   color: var(--terminal-text);
+   font-family: "JetBrains Mono", "Consolas", "Monaco", "Courier New", monospace;
+}
+
+.notepad-header {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   margin-bottom: 20px;
+   padding-bottom: 10px;
+   border-bottom: 1px solid var(--terminal-border);
+}
+
+.terminal-title {
+   font-size: 18px;
+   font-weight: 400;
+   color: var(--terminal-primary);
+   margin: 0;
+   text-shadow: 0 0 5px var(--terminal-glow);
+}
+
+.notepad-controls {
+   display: flex;
+   gap: 10px;
+}
+
+.terminal-btn {
+   display: flex;
+   align-items: center;
+   background: transparent;
+   border: 1px solid var(--terminal-border);
+   border-radius: 4px;
+   padding: 6px 12px;
+   color: var(--terminal-muted);
+   font-family: inherit;
+   font-size: 12px;
+   cursor: pointer;
+   transition: all 0.15s ease;
+   white-space: nowrap;
+}
+
+.terminal-btn .cmd-prefix {
+   margin-right: 4px;
+   color: var(--terminal-primary);
+   font-weight: 500;
+}
+
+.terminal-btn:hover {
+   border-color: var(--terminal-primary);
+   color: var(--terminal-text);
+   background: rgba(0, 255, 65, 0.05);
+   box-shadow: 0 0 8px rgba(0, 255, 65, 0.2);
+}
+
+.terminal-btn.save-btn:hover {
+   background: rgba(0, 255, 65, 0.1);
+}
+
+.terminal-btn.cancel-btn:hover {
+   border-color: #ff4444;
+   color: #ff4444;
+   background: rgba(255, 68, 68, 0.05);
+}
+
+/* Note Input Section */
+.note-input-section {
+   margin-bottom: 20px;
+   padding: 15px;
+   border: 1px solid var(--terminal-border);
+   border-radius: 4px;
+   background: rgba(0, 255, 65, 0.02);
+}
+
+.input-header {
+   margin-bottom: 8px;
+   color: var(--terminal-primary);
+   font-size: 14px;
+}
+
+.terminal-prompt {
+   color: var(--terminal-primary);
+   font-weight: 500;
+}
+
+.note-textarea {
+   width: 100%;
+   min-height: 100px;
+   background: transparent;
+   border: 1px solid var(--terminal-border);
+   border-radius: 4px;
+   padding: 10px;
+   color: var(--terminal-text);
+   font-family: inherit;
+   font-size: 14px;
+   line-height: 1.4;
+   resize: vertical;
+   outline: none;
+   transition: border-color 0.15s ease;
+}
+
+.note-textarea:focus {
+   border-color: var(--terminal-primary);
+   box-shadow: 0 0 0 2px rgba(0, 255, 65, 0.1);
+}
+
+.note-textarea::placeholder {
+   color: var(--terminal-muted);
+   opacity: 0.7;
+}
+
+.input-actions {
+   display: flex;
+   gap: 10px;
+   margin-top: 10px;
+   justify-content: flex-end;
+}
+
+/* Notes Container */
+.notes-container {
+   margin-top: 20px;
+}
+
+.notes-header {
+   margin-bottom: 15px;
+   padding-bottom: 8px;
+   border-bottom: 1px solid var(--terminal-border);
+   color: var(--terminal-primary);
+   font-size: 14px;
+}
+
+.notes-list {
+   display: flex;
+   flex-direction: column;
+   gap: 15px;
+}
+
+.empty-state {
+   padding: 40px 20px;
+   text-align: center;
+   color: var(--terminal-muted);
+   font-style: italic;
+   border: 1px dashed var(--terminal-border);
+   border-radius: 4px;
+   background: rgba(0, 255, 65, 0.01);
+}
+
+.note-item {
+   border: 1px solid var(--terminal-border);
+   border-radius: 4px;
+   padding: 15px;
+   background: rgba(0, 255, 65, 0.02);
+   transition: all 0.15s ease;
+}
+
+.note-item:hover {
+   border-color: var(--terminal-primary);
+   background: rgba(0, 255, 65, 0.04);
+   box-shadow: 0 2px 8px rgba(0, 255, 65, 0.1);
+}
+
+.note-content {
+   margin-bottom: 10px;
+   line-height: 1.5;
+   word-wrap: break-word;
+   white-space: pre-wrap;
+   color: var(--terminal-text);
+}
+
+.note-meta {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding-top: 10px;
+   border-top: 1px solid var(--terminal-border);
+   opacity: 0.7;
+}
+
+.note-timestamp {
+   font-size: 11px;
+   color: var(--terminal-muted);
+}
+
+.note-actions {
+   display: flex;
+   gap: 8px;
+}
+
+.note-action-btn {
+   background: transparent;
+   border: 1px solid var(--terminal-border);
+   border-radius: 3px;
+   padding: 4px 8px;
+   color: var(--terminal-muted);
+   font-family: inherit;
+   font-size: 10px;
+   cursor: pointer;
+   transition: all 0.15s ease;
+}
+
+.note-action-btn:hover {
+   border-color: var(--terminal-primary);
+   color: var(--terminal-primary);
+   background: rgba(0, 255, 65, 0.05);
+}
+
+.note-action-btn.delete-btn:hover {
+   border-color: #ff4444;
+   color: #ff4444;
+   background: rgba(255, 68, 68, 0.05);
+}
+
+.note-action-btn .cmd-prefix {
+   color: inherit;
+}
+
+/* Status Messages */
+.status-message {
+   position: fixed;
+   top: 80px;
+   right: 20px;
+   padding: 10px 15px;
+   border-radius: 4px;
+   font-size: 12px;
+   font-family: inherit;
+   z-index: 1002;
+   max-width: 300px;
+   display: none;
+   animation: slideIn 0.3s ease;
+}
+
+.status-message.success {
+   background: rgba(0, 255, 65, 0.1);
+   border: 1px solid var(--terminal-primary);
+   color: var(--terminal-primary);
+}
+
+.status-message.error {
+   background: rgba(255, 68, 68, 0.1);
+   border: 1px solid #ff4444;
+   color: #ff4444;
+}
+
+.status-message.info {
+   background: rgba(0, 255, 65, 0.05);
+   border: 1px solid var(--terminal-border);
+   color: var(--terminal-muted);
+}
+
+@keyframes slideIn {
+   from {
+      transform: translateX(100%);
+      opacity: 0;
+   }
+   to {
+      transform: translateX(0);
+      opacity: 1;
+   }
+}
+
+/* Responsive Design for Notepad */
+@media (max-width: 768px) {
+   .notepad-app {
+      padding: 15px;
+   }
+
+   .notepad-header {
+      flex-direction: column;
+      gap: 15px;
+      align-items: flex-start;
+   }
+
+   .notepad-controls {
+      width: 100%;
+      justify-content: flex-start;
+   }
+
+   .terminal-title {
+      font-size: 16px;
+   }
+
+   .note-meta {
+      flex-direction: column;
+      gap: 10px;
+      align-items: flex-start;
+   }
+
+   .status-message {
+      top: 60px;
+      right: 10px;
+      left: 10px;
+      max-width: none;
+   }
+}
+
+@media (max-width: 480px) {
+   .notepad-app {
+      padding: 10px;
+   }
+
+   .note-input-section {
+      padding: 10px;
+   }
+
+   .note-item {
+      padding: 10px;
+   }
+
+   .input-actions {
+      flex-direction: column;
+   }
+
+   .terminal-btn {
+      justify-content: center;
+   }
+
+   .note-actions {
+      width: 100%;
+      justify-content: flex-end;
+   }
+}
+
+/* Alert System Styles */
+.alert-container {
+   position: fixed;
+   top: 20px;
+   right: 20px;
+   z-index: 2000;
+   display: flex;
+   flex-direction: column;
+   gap: 10px;
+   max-width: 400px;
+   pointer-events: none;
+}
+
+/* Base Alert Styles */
+.terminal-alert {
+   background: var(--terminal-bg);
+   border: 1px solid var(--terminal-border);
+   border-radius: 6px;
+   padding: 12px 16px;
+   font-family: "JetBrains Mono", "Consolas", "Monaco", monospace;
+   font-size: 13px;
+   box-shadow: 0 4px 12px var(--terminal-shadow);
+   backdrop-filter: blur(10px);
+   -webkit-backdrop-filter: blur(10px);
+   opacity: 0;
+   transform: translateX(100%);
+   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+   pointer-events: auto;
+   position: relative;
+   overflow: hidden;
+}
+
+.terminal-alert.show {
+   opacity: 1;
+   transform: translateX(0);
+}
+
+.terminal-alert.hide {
+   opacity: 0;
+   transform: translateX(100%);
+   pointer-events: none;
+}
+
+/* Alert Content */
+.alert-content {
+   display: flex;
+   align-items: flex-start;
+   gap: 10px;
+}
+
+.alert-icon {
+   flex-shrink: 0;
+   font-size: 16px;
+   margin-top: 1px;
+}
+
+.alert-message {
+   flex: 1;
+   line-height: 1.4;
+   word-wrap: break-word;
+}
+
+.alert-close {
+   background: transparent;
+   border: none;
+   color: inherit;
+   font-size: 12px;
+   cursor: pointer;
+   padding: 2px;
+   opacity: 0.7;
+   transition: opacity 0.2s ease;
+   flex-shrink: 0;
+   margin-left: 8px;
+}
+
+.alert-close:hover {
+   opacity: 1;
+}
+
+/* Alert Progress Bar (for toast auto-dismiss) */
+.alert-progress {
+   position: absolute;
+   bottom: 0;
+   left: 0;
+   height: 2px;
+   background: currentColor;
+   width: 100%;
+   transform-origin: left;
+   animation: alertProgress linear forwards;
+}
+
+@keyframes alertProgress {
+   from {
+      transform: scaleX(1);
+   }
+   to {
+      transform: scaleX(0);
+   }
+}
+
+/* Alert Type Variants */
+.terminal-alert.success {
+   border-color: var(--alert-success-border);
+   background: var(--alert-success-bg);
+   color: var(--alert-success);
+}
+
+.terminal-alert.success .alert-icon {
+   color: var(--alert-success);
+   text-shadow: 0 0 8px var(--alert-success-border);
+}
+
+.terminal-alert.warning {
+   border-color: var(--alert-warning-border);
+   background: var(--alert-warning-bg);
+   color: var(--alert-warning);
+}
+
+.terminal-alert.warning .alert-icon {
+   color: var(--alert-warning);
+   text-shadow: 0 0 8px var(--alert-warning-border);
+}
+
+.terminal-alert.error {
+   border-color: var(--alert-error-border);
+   background: var(--alert-error-bg);
+   color: var(--alert-error);
+}
+
+.terminal-alert.error .alert-icon {
+   color: var(--alert-error);
+   text-shadow: 0 0 8px var(--alert-error-border);
+}
+
+.terminal-alert.info {
+   border-color: var(--alert-info-border);
+   background: var(--alert-info-bg);
+   color: var(--alert-info);
+}
+
+.terminal-alert.info .alert-icon {
+   color: var(--alert-info);
+   text-shadow: 0 0 8px var(--alert-info-border);
+}
+
+/* Inline Alerts */
+.terminal-alert.inline-alert {
+   position: relative;
+   margin: 10px 0;
+   transform: translateY(-10px);
+   max-width: none;
+}
+
+.terminal-alert.inline-alert.show {
+   transform: translateY(0);
+}
+
+.terminal-alert.inline-alert.hide {
+   transform: translateY(-10px);
+}
+
+/* Modal Alert System */
+.modal-overlay {
+   position: fixed;
+   top: 0;
+   left: 0;
+   right: 0;
+   bottom: 0;
+   background: rgba(0, 0, 0, 0.7);
+   backdrop-filter: blur(5px);
+   -webkit-backdrop-filter: blur(5px);
+   z-index: 3000;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   opacity: 0;
+   visibility: hidden;
+   transition: all 0.3s ease;
+   padding: 20px;
+}
+
+.modal-overlay.show {
+   opacity: 1;
+   visibility: visible;
+}
+
+.modal-overlay[aria-hidden="true"] {
+   display: none;
+}
+
+.modal-alert {
+   background: var(--terminal-bg);
+   border: 1px solid var(--terminal-border);
+   border-radius: 8px;
+   box-shadow: 0 10px 30px var(--terminal-shadow);
+   max-width: 500px;
+   width: 100%;
+   max-height: 80vh;
+   overflow: hidden;
+   transform: scale(0.9);
+   transition: transform 0.3s ease;
+   font-family: "JetBrains Mono", "Consolas", "Monaco", monospace;
+}
+
+.modal-overlay.show .modal-alert {
+   transform: scale(1);
+}
+
+.modal-header {
+   display: flex;
+   align-items: center;
+   padding: 20px 20px 0 20px;
+   gap: 12px;
+}
+
+.modal-icon {
+   font-size: 24px;
+   flex-shrink: 0;
+}
+
+.modal-title {
+   flex: 1;
+   font-size: 18px;
+   font-weight: 500;
+   margin: 0;
+   color: var(--terminal-text);
+}
+
+.modal-close {
+   background: transparent;
+   border: 1px solid var(--terminal-border);
+   border-radius: 4px;
+   color: var(--terminal-muted);
+   width: 32px;
+   height: 32px;
+   cursor: pointer;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   transition: all 0.2s ease;
+   flex-shrink: 0;
+}
+
+.modal-close:hover {
+   border-color: var(--terminal-primary);
+   color: var(--terminal-primary);
+   background: rgba(0, 255, 65, 0.05);
+}
+
+.modal-content {
+   padding: 20px;
+}
+
+.modal-message {
+   line-height: 1.5;
+   color: var(--terminal-text);
+   margin: 0;
+   word-wrap: break-word;
+}
+
+.modal-actions {
+   padding: 0 20px 20px 20px;
+   display: flex;
+   gap: 10px;
+   justify-content: flex-end;
+}
+
+/* Modal Type Variants */
+.modal-alert.success .modal-icon {
+   color: var(--alert-success);
+   text-shadow: 0 0 8px var(--alert-success-border);
+}
+
+.modal-alert.success .modal-title {
+   color: var(--alert-success);
+}
+
+.modal-alert.warning .modal-icon {
+   color: var(--alert-warning);
+   text-shadow: 0 0 8px var(--alert-warning-border);
+}
+
+.modal-alert.warning .modal-title {
+   color: var(--alert-warning);
+}
+
+.modal-alert.error .modal-icon {
+   color: var(--alert-error);
+   text-shadow: 0 0 8px var(--alert-error-border);
+}
+
+.modal-alert.error .modal-title {
+   color: var(--alert-error);
+}
+
+.modal-alert.info .modal-icon {
+   color: var(--alert-info);
+   text-shadow: 0 0 8px var(--alert-info-border);
+}
+
+.modal-alert.info .modal-title {
+   color: var(--alert-info);
+}
+
+/* Responsive Alert Design */
+@media (max-width: 768px) {
+   .alert-container {
+      top: 10px;
+      right: 10px;
+      left: 10px;
+      max-width: none;
+   }
+
+   .terminal-alert {
+      font-size: 12px;
+      padding: 10px 12px;
+   }
+
+   .modal-overlay {
+      padding: 10px;
+   }
+
+   .modal-alert {
+      max-height: 90vh;
+   }
+
+   .modal-header {
+      padding: 15px 15px 0 15px;
+   }
+
+   .modal-content {
+      padding: 15px;
+   }
+
+   .modal-actions {
+      padding: 0 15px 15px 15px;
+      flex-direction: column;
+   }
+
+   .modal-title {
+      font-size: 16px;
+   }
+
+   .modal-icon {
+      font-size: 20px;
+   }
+}
+
+@media (max-width: 480px) {
+   .alert-content {
+      gap: 8px;
+   }
+
+   .alert-icon {
+      font-size: 14px;
+   }
+
+   .alert-message {
+      font-size: 11px;
+   }
+
+   .terminal-alert {
+      padding: 8px 10px;
+   }
+}
+
+/* High contrast mode support for alerts */
+@media (prefers-contrast: high) {
+   .terminal-alert {
+      border-width: 2px;
+   }
+
+   .modal-alert {
+      border-width: 2px;
+   }
+}
+
+/* Reduced motion support for alerts */
+@media (prefers-reduced-motion: reduce) {
+   .terminal-alert,
+   .modal-alert,
+   .modal-overlay {
+      transition: none;
+   }
+
+   .alert-progress {
+      animation: none;
+   }
+}
+
+/* Focus management for modal alerts */
+.modal-alert:focus-within {
+   outline: 2px solid var(--terminal-primary);
+   outline-offset: 2px;
+}
