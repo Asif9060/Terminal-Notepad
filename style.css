@@ -93,8 +93,8 @@ body::after {
 
 /* Terminal screen area */
 .terminal-screen {
-   padding: 20px;
-   padding-bottom: 60px; /* Space for terminal navigation */
+   padding: 30px;
+   padding-bottom: 80px; /* Space for terminal navigation */
    min-height: 100vh;
    position: relative;
    z-index: 1;
@@ -102,7 +102,7 @@ body::after {
 
 .terminal-content {
    width: 100%;
-   height: calc(100vh - 120px);
+   height: calc(100vh - 160px);
    position: relative;
 }
 
@@ -166,7 +166,7 @@ body::after {
    flex-shrink: 0;
    margin-right: 8px;
    color: var(--terminal-primary);
-   font-size: 14px;
+   font-size: 16px;
    font-weight: 500;
 }
 
@@ -196,12 +196,12 @@ body::after {
    background: transparent;
    border: 1px solid rgba(0, 255, 65, 0.2);
    border-radius: 4px;
-   padding: 6px 10px;
+   padding: 7px 12px;
    min-width: fit-content;
-   height: 32px;
+   height: 34px;
    color: var(--terminal-muted);
    font-family: inherit;
-   font-size: 12px;
+   font-size: 14px;
    font-weight: 400;
    cursor: pointer;
    transition: all 0.15s ease;
@@ -264,14 +264,14 @@ body::after {
    }
 
    .terminal-cmd {
-      padding: 5px 8px;
-      height: 30px;
-      font-size: 11px;
-      min-width: 60px;
+      padding: 6px 10px;
+      height: 32px;
+      font-size: 13px;
+      min-width: 65px;
    }
 
    .terminal-prompt {
-      font-size: 13px;
+      font-size: 15px;
    }
 
    .cmd-prefix {
@@ -290,14 +290,14 @@ body::after {
    }
 
    .terminal-cmd {
-      padding: 4px 6px;
-      height: 28px;
-      font-size: 10px;
-      min-width: 50px;
+      padding: 5px 8px;
+      height: 30px;
+      font-size: 12px;
+      min-width: 55px;
    }
 
    .terminal-prompt {
-      font-size: 12px;
+      font-size: 14px;
       margin-right: 6px;
    }
 
@@ -374,9 +374,9 @@ body::after {
 
 /* Notepad Application Styles */
 .notepad-app {
-   max-width: 800px;
+   max-width: 1200px;
    margin: 0 auto;
-   padding: 20px;
+   padding: 30px;
    color: var(--terminal-text);
    font-family: "JetBrains Mono", "Consolas", "Monaco", "Courier New", monospace;
 }
@@ -385,13 +385,13 @@ body::after {
    display: flex;
    justify-content: space-between;
    align-items: center;
-   margin-bottom: 20px;
-   padding-bottom: 10px;
+   margin-bottom: 30px;
+   padding-bottom: 15px;
    border-bottom: 1px solid var(--terminal-border);
 }
 
 .terminal-title {
-   font-size: 18px;
+   font-size: 28px;
    font-weight: 400;
    color: var(--terminal-primary);
    margin: 0;
@@ -409,10 +409,10 @@ body::after {
    background: transparent;
    border: 1px solid var(--terminal-border);
    border-radius: 4px;
-   padding: 6px 12px;
+   padding: 8px 14px;
    color: var(--terminal-muted);
    font-family: inherit;
-   font-size: 12px;
+   font-size: 16px;
    cursor: pointer;
    transition: all 0.15s ease;
    white-space: nowrap;
@@ -443,17 +443,17 @@ body::after {
 
 /* Note Input Section */
 .note-input-section {
-   margin-bottom: 20px;
-   padding: 15px;
+   margin-bottom: 25px;
+   padding: 20px;
    border: 1px solid var(--terminal-border);
    border-radius: 4px;
    background: rgba(0, 255, 65, 0.02);
 }
 
 .input-header {
-   margin-bottom: 8px;
+   margin-bottom: 10px;
    color: var(--terminal-primary);
-   font-size: 14px;
+   font-size: 16px;
 }
 
 .terminal-prompt {
@@ -463,15 +463,15 @@ body::after {
 
 .note-textarea {
    width: 100%;
-   min-height: 100px;
+   min-height: 120px;
    background: transparent;
    border: 1px solid var(--terminal-border);
    border-radius: 4px;
-   padding: 10px;
+   padding: 12px;
    color: var(--terminal-text);
    font-family: inherit;
-   font-size: 14px;
-   line-height: 1.4;
+   font-size: 18px;
+   line-height: 1.5;
    resize: vertical;
    outline: none;
    transition: border-color 0.15s ease;
@@ -496,28 +496,29 @@ body::after {
 
 /* Notes Container */
 .notes-container {
-   margin-top: 20px;
+   margin-top: 30px;
 }
 
 .notes-header {
-   margin-bottom: 15px;
-   padding-bottom: 8px;
+   margin-bottom: 25px;
+   padding-bottom: 15px;
    border-bottom: 1px solid var(--terminal-border);
    color: var(--terminal-primary);
-   font-size: 14px;
+   font-size: 16px;
 }
 
 .notes-list {
    display: flex;
    flex-direction: column;
-   gap: 15px;
+   gap: 20px;
 }
 
 .empty-state {
-   padding: 40px 20px;
+   padding: 60px 40px;
    text-align: center;
    color: var(--terminal-muted);
    font-style: italic;
+   font-size: 16px;
    border: 1px dashed var(--terminal-border);
    border-radius: 4px;
    background: rgba(0, 255, 65, 0.01);
@@ -526,7 +527,7 @@ body::after {
 .note-item {
    border: 1px solid var(--terminal-border);
    border-radius: 4px;
-   padding: 15px;
+   padding: 20px;
    background: rgba(0, 255, 65, 0.02);
    transition: all 0.15s ease;
 }
@@ -538,11 +539,12 @@ body::after {
 }
 
 .note-content {
-   margin-bottom: 10px;
-   line-height: 1.5;
+   margin-bottom: 12px;
+   line-height: 1.6;
    word-wrap: break-word;
    white-space: pre-wrap;
    color: var(--terminal-text);
+   font-size: 16px;
 }
 
 .note-meta {
@@ -555,7 +557,7 @@ body::after {
 }
 
 .note-timestamp {
-   font-size: 11px;
+   font-size: 13px;
    color: var(--terminal-muted);
 }
 
@@ -568,10 +570,10 @@ body::after {
    background: transparent;
    border: 1px solid var(--terminal-border);
    border-radius: 3px;
-   padding: 4px 8px;
+   padding: 5px 10px;
    color: var(--terminal-muted);
    font-family: inherit;
-   font-size: 10px;
+   font-size: 12px;
    cursor: pointer;
    transition: all 0.15s ease;
 }
@@ -597,12 +599,12 @@ body::after {
    position: fixed;
    top: 80px;
    right: 20px;
-   padding: 10px 15px;
+   padding: 12px 18px;
    border-radius: 4px;
-   font-size: 12px;
+   font-size: 14px;
    font-family: inherit;
    z-index: 1002;
-   max-width: 300px;
+   max-width: 350px;
    display: none;
    animation: slideIn 0.3s ease;
 }
@@ -654,7 +656,7 @@ body::after {
    }
 
    .terminal-title {
-      font-size: 16px;
+      font-size: 20px;
    }
 
    .note-meta {
@@ -716,9 +718,9 @@ body::after {
    background: var(--terminal-bg);
    border: 1px solid var(--terminal-border);
    border-radius: 6px;
-   padding: 12px 16px;
+   padding: 14px 18px;
    font-family: "JetBrains Mono", "Consolas", "Monaco", monospace;
-   font-size: 13px;
+   font-size: 15px;
    box-shadow: 0 4px 12px var(--terminal-shadow);
    backdrop-filter: blur(10px);
    -webkit-backdrop-filter: blur(10px);
@@ -750,7 +752,7 @@ body::after {
 
 .alert-icon {
    flex-shrink: 0;
-   font-size: 16px;
+   font-size: 18px;
    margin-top: 1px;
 }
 
@@ -764,13 +766,13 @@ body::after {
    background: transparent;
    border: none;
    color: inherit;
-   font-size: 12px;
+   font-size: 14px;
    cursor: pointer;
-   padding: 2px;
+   padding: 3px;
    opacity: 0.7;
    transition: opacity 0.2s ease;
    flex-shrink: 0;
-   margin-left: 8px;
+   margin-left: 10px;
 }
 
 .alert-close:hover {
@@ -914,13 +916,13 @@ body::after {
 }
 
 .modal-icon {
-   font-size: 24px;
+   font-size: 26px;
    flex-shrink: 0;
 }
 
 .modal-title {
    flex: 1;
-   font-size: 18px;
+   font-size: 20px;
    font-weight: 500;
    margin: 0;
    color: var(--terminal-text);
@@ -952,10 +954,11 @@ body::after {
 }
 
 .modal-message {
-   line-height: 1.5;
+   line-height: 1.6;
    color: var(--terminal-text);
    margin: 0;
    word-wrap: break-word;
+   font-size: 16px;
 }
 
 .modal-actions {
@@ -1012,8 +1015,8 @@ body::after {
    }
 
    .terminal-alert {
-      font-size: 12px;
-      padding: 10px 12px;
+      font-size: 14px;
+      padding: 12px 16px;
    }
 
    .modal-overlay {
@@ -1038,11 +1041,11 @@ body::after {
    }
 
    .modal-title {
-      font-size: 16px;
+      font-size: 18px;
    }
 
    .modal-icon {
-      font-size: 20px;
+      font-size: 22px;
    }
 }
 
@@ -1052,11 +1055,11 @@ body::after {
    }
 
    .alert-icon {
-      font-size: 14px;
+      font-size: 16px;
    }
 
    .alert-message {
-      font-size: 11px;
+      font-size: 13px;
    }
 
    .terminal-alert {
